@@ -20,13 +20,25 @@ Common settings: 224x224 input, batch size 32, Adam (3e-4; 1e-5 for fine-tuning)
 The script is exported from a Google Colab notebook (`!pip` / `!kaggle` shell lines, `google.colab.userdata`), so run it on Colab with a GPU runtime:
 
 1. Add your Kaggle token as a Colab secret named `KAGGLE_API_TOKEN`.
-2. Paste `dla_proj.py` into a notebook (cells are marked with `# CELL n` comments) or upload it as a notebook and run all cells.
+2. Upload `DLA_Proj.ipynb` to Colab and run all cells (`dla_proj.py` is the same code exported as a script).
 
 Outputs (`.keras` checkpoints, plots) are written to `/content/`.
 
-## Note on the comparison
+## Results
 
-The final comparison cell uses hard-coded results for the custom CNN (epoch 6 checkpoint: val acc 0.5833, test acc 0.6667) and measures MobileNetV2 live. Rerun the CNN evaluation and update those constants if you retrain it.
+Dataset: 3 classes (Healthy, Powdery, Rust); 1,322 train / 60 validation / 150 test images, no corrupted files.
+
+| Model | Val acc | Test acc | Test precision | Test recall | Test F1 |
+|---|---|---|---|---|---|
+| Custom CNN (best epoch 6) | 0.5833 | 0.6667 | 0.7021 | 0.6667 | 0.6654 |
+| MobileNetV2, frozen base | 0.9500 | 0.9733 | 0.9753 | 0.9733 | 0.9733 |
+| **MobileNetV2, fine-tuned** | **0.9833** | **0.9800** | 0.9811 | 0.9800 | 0.9800 |
+
+Fine-tuned MobileNetV2 beats the custom CNN by about 31 points of test accuracy. The CNN struggles most with Rust (validation recall 0.30); the fine-tuned MobileNetV2 classifies every Rust test image correctly, and its only test errors are a few Powdery leaves predicted as Healthy.
+
+The validation set is small (60 images, about 1.7 points per image), so the gain from fine-tuning (0.950 to 0.983) is 2 images and should not be over-read.
+
+The full run with outputs is in `DLA_Proj.ipynb`. The CNN figures in the final comparison cell are hard-coded from its epoch-6 evaluation; update them if you retrain it.
 
 ## Requirements
 
